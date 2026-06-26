@@ -52,11 +52,11 @@ changelog:
 
 release:
   github:
-    owner: whatsmynameidontknow
+    owner: thansetan
     name: git-de
   footer: |
     ## Installation
     
     ```bash
-    go install github.com/whatsmynameidontknow/git-de/cmd/git-de@{{ .Tag }}
+    go install github.com/thansetan/git-de/cmd/git-de@{{ .Tag }}
     ```

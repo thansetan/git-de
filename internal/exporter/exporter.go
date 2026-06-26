@@ -15,8 +15,8 @@ import (
 	"sync/atomic"
 	"syscall"
 
-	"github.com/whatsmynameidontknow/git-de/internal/git"
-	"github.com/whatsmynameidontknow/git-de/internal/manifest"
+	"github.com/thansetan/git-de/internal/git"
+	"github.com/thansetan/git-de/internal/manifest"
 )
 
 type GitExporter interface {

@@ -10,8 +10,8 @@ import (
 	"github.com/charmbracelet/bubbles/progress"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/whatsmynameidontknow/git-de/internal/exporter"
-	"github.com/whatsmynameidontknow/git-de/internal/git"
+	"github.com/thansetan/git-de/internal/exporter"
+	"github.com/thansetan/git-de/internal/git"
 )
 
 // Model is the top-level Bubble Tea model for the TUI.

@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/spf13/pflag"
-	"github.com/whatsmynameidontknow/git-de/internal/validation"
+	"github.com/thansetan/git-de/internal/validation"
 )
 
 type Config struct {

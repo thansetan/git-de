@@ -3,7 +3,7 @@ package main
 import (
 	"testing"
 
-	"github.com/whatsmynameidontknow/git-de/internal/cli"
+	"github.com/thansetan/git-de/internal/cli"
 )
 
 func TestShouldUseTUI(t *testing.T) {

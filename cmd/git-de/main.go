@@ -6,10 +6,10 @@ import (
 	"runtime/debug"
 	"strings"
 
-	"github.com/whatsmynameidontknow/git-de/internal/cli"
-	"github.com/whatsmynameidontknow/git-de/internal/exporter"
-	"github.com/whatsmynameidontknow/git-de/internal/git"
-	"github.com/whatsmynameidontknow/git-de/internal/tui"
+	"github.com/thansetan/git-de/internal/cli"
+	"github.com/thansetan/git-de/internal/exporter"
+	"github.com/thansetan/git-de/internal/git"
+	"github.com/thansetan/git-de/internal/tui"
 	"golang.org/x/term"
 )
 

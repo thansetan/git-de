@@ -1,6 +1,6 @@
 # Git D(iff) E(xport)
 <p align="center">
-  <img src="https://github.com/whatsmynameidontknow/git-de/blob/main/media/demo.gif?raw=true" alt="git-de demo"/>
+  <img src="https://github.com/thansetan/git-de/blob/main/media/demo.gif?raw=true" alt="git-de demo"/>
 </p>
 
 A **CLI** tool to export files changed between Git commits while preserving directory structure.
@@ -8,10 +8,10 @@ A **CLI** tool to export files changed between Git commits while preserving dire
 ## Installation
 
 ```bash
-go install github.com/whatsmynameidontknow/git-de/cmd/git-de@latest
+go install github.com/thansetan/git-de/cmd/git-de@latest
 ```
 
-Or download from [releases](https://github.com/whatsmynameidontknow/git-de/releases).
+Or download from [releases](https://github.com/thansetan/git-de/releases).
 
 ## Usage
 

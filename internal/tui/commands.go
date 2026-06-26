@@ -12,9 +12,9 @@ import (
 
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/whatsmynameidontknow/git-de/internal/exporter"
-	"github.com/whatsmynameidontknow/git-de/internal/git"
-	"github.com/whatsmynameidontknow/git-de/internal/manifest"
+	"github.com/thansetan/git-de/internal/exporter"
+	"github.com/thansetan/git-de/internal/git"
+	"github.com/thansetan/git-de/internal/manifest"
 )
 
 func (m Model) loadBranchesCmd() tea.Msg {

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/whatsmynameidontknow/git-de/internal/git"
+	"github.com/thansetan/git-de/internal/git"
 )
 
 func TestGenerate(t *testing.T) {

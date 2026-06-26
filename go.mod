@@ -1,4 +1,4 @@
-module github.com/whatsmynameidontknow/git-de
+module github.com/thansetan/git-de
 
 go 1.25.6
 

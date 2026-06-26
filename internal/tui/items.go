@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/whatsmynameidontknow/git-de/internal/git"
+	"github.com/thansetan/git-de/internal/git"
 )
 
 type branchItem struct {

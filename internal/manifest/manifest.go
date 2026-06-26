@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/whatsmynameidontknow/git-de/internal/git"
+	"github.com/thansetan/git-de/internal/git"
 )
 
 func Generate(changes []git.FileChange) string {

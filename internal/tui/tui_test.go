@@ -8,7 +8,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/whatsmynameidontknow/git-de/internal/git"
+	"github.com/thansetan/git-de/internal/git"
 )
 
 type gitClientMock struct{}
