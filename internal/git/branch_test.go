@@ -502,6 +502,26 @@ func TestClient_GetRecentCommitsOnBranch(t *testing.T) {
 			}
 		}
 	})
+
+	t.Run("handles branch name matching directory", func(t *testing.T) {
+		runGit(t, repoDir, "checkout", "main")
+		runGit(t, repoDir, "checkout", "-b", "seamless")
+		if err := os.MkdirAll(filepath.Join(repoDir, "seamless"), 0o755); err != nil {
+			t.Fatalf("create seamless directory: %v", err)
+		}
+		os.WriteFile(filepath.Join(repoDir, "seamless", "file.txt"), []byte("content"), 0o644)
+		runGit(t, repoDir, "add", ".")
+		runGit(t, repoDir, "commit", "-m", "add seamless directory")
+
+		commits, err := client.GetRecentCommitsOnBranch("seamless", 10)
+		if err != nil {
+			t.Fatalf("GetRecentCommitsOnBranch() failed: %v", err)
+		}
+
+		if len(commits) == 0 || commits[0].Message != "add seamless directory" {
+			t.Fatalf("Expected latest commit from seamless branch, got: %+v", commits)
+		}
+	})
 }
 
 func TestClient_CheckoutBranch(t *testing.T) {
@@ -549,6 +569,7 @@ func TestClient_GetCommitRangeStats(t *testing.T) {
 	os.WriteFile(filepath.Join(repoDir, "file.txt"), []byte("content"), 0o644)
 	runGit(t, repoDir, "add", ".")
 	runGit(t, repoDir, "commit", "-m", "initial")
+	runGit(t, repoDir, "branch", "-M", "main")
 
 	cmd := exec.Command("git", "rev-parse", "HEAD")
 	cmd.Dir = repoDir
@@ -600,6 +621,25 @@ func TestClient_GetCommitRangeStats(t *testing.T) {
 		}
 		if stats.Deletions < 0 {
 			t.Errorf("Expected non-negative deletions, got %d", stats.Deletions)
+		}
+	})
+
+	t.Run("handles branch name matching file", func(t *testing.T) {
+		runGit(t, repoDir, "branch", "seamless", firstCommit)
+		runGit(t, repoDir, "checkout", "seamless")
+		os.WriteFile(filepath.Join(repoDir, "seamless"), []byte("content"), 0o644)
+		runGit(t, repoDir, "add", ".")
+		runGit(t, repoDir, "commit", "-m", "add seamless file")
+
+		stats, err := client.GetCommitRangeStats("main", "seamless")
+		if err != nil {
+			t.Fatalf("GetCommitRangeStats() failed: %v", err)
+		}
+		if stats.CommitCount != 1 {
+			t.Errorf("Expected 1 commit, got %d", stats.CommitCount)
+		}
+		if stats.FilesChanged == 0 {
+			t.Error("Expected changed files")
 		}
 	})
 }

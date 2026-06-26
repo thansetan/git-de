@@ -77,7 +77,7 @@ func (c *Client) ValidateCommit(commit string) error {
 }
 
 func (c *Client) GetChangedFiles(fromCommit, toCommit string) ([]FileChange, error) {
-	cmd := exec.Command("git", "diff", "--name-status", "-M", "-C", fromCommit, toCommit)
+	cmd := exec.Command("git", "diff", "--name-status", "-M", "-C", fromCommit, toCommit, "--")
 	cmd.Dir = c.workDir
 
 	output, err := cmd.Output()

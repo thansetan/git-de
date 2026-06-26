@@ -272,6 +272,33 @@ func TestClient_GetChangedFiles_WithDeleted(t *testing.T) {
 	})
 }
 
+func TestClient_GetChangedFiles_WithBranchNameMatchingFile(t *testing.T) {
+	repoDir := setupTestRepo(t)
+	client := NewClient(repoDir)
+
+	os.WriteFile(filepath.Join(repoDir, "base.txt"), []byte("content"), 0o644)
+	runGit(t, repoDir, "add", ".")
+	runGit(t, repoDir, "commit", "-m", "initial")
+	runGit(t, repoDir, "branch", "-M", "main")
+	runGit(t, repoDir, "checkout", "-b", "seamless")
+
+	os.WriteFile(filepath.Join(repoDir, "seamless"), []byte("content"), 0o644)
+	runGit(t, repoDir, "add", ".")
+	runGit(t, repoDir, "commit", "-m", "add seamless file")
+
+	files, err := client.GetChangedFiles("main", "seamless")
+	if err != nil {
+		t.Fatalf("GetChangedFiles() failed: %v", err)
+	}
+
+	if len(files) != 1 {
+		t.Fatalf("Expected 1 changed file, got %d: %+v", len(files), files)
+	}
+	if files[0].Path != "seamless" || files[0].Status != StatusAdded {
+		t.Fatalf("Expected seamless to be added, got %+v", files[0])
+	}
+}
+
 func TestClient_GetFileContent(t *testing.T) {
 	repoDir := setupTestRepo(t)
 	client := NewClient(repoDir)

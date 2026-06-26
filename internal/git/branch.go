@@ -282,7 +282,8 @@ func (c *Client) GetRecentCommitsOnBranch(branch string, n int) ([]Commit, error
 	return c.getCommits("git", "log", branch,
 		"-n", fmt.Sprintf("%d", n),
 		"--no-merges",
-		"--pretty=format:%H %aI %s")
+		"--pretty=format:%H %aI %s",
+		"--")
 }
 
 // CheckoutBranch checks out the specified branch.
@@ -310,7 +311,7 @@ func (c *Client) GetCommitRangeStats(from, to string) (CommitRangeStats, error) 
 	stats.CommitCount, _ = strconv.Atoi(strings.TrimSpace(string(countOut)))
 
 	// Get diff stats (numstat for precise +/-)
-	statCmd := exec.Command("git", "diff", "--numstat", from, to)
+	statCmd := exec.Command("git", "diff", "--numstat", from, to, "--")
 	statCmd.Dir = c.workDir
 	statOut, err := statCmd.Output()
 	if err != nil {
