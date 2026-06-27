@@ -51,6 +51,9 @@ func (m Model) View() string {
 	case stateDone:
 		m.viewDone(&sb)
 
+	case stateFinalSummary:
+		m.viewFinalSummary(&sb)
+
 	case stateError:
 		m.viewError(&sb)
 	}
@@ -235,6 +238,17 @@ func (m Model) viewDone(sb *strings.Builder) {
 		return
 	}
 	fmt.Fprintln(sb, "\nPress any key to exit")
+}
+
+func (m Model) viewFinalSummary(sb *strings.Builder) {
+	sb.WriteString("Summary:\n")
+	fmt.Fprint(sb, totalStyle.Render(fmt.Sprintf("- Total Files:\t%d files", m.totalFiles))+"\n")
+	fmt.Fprint(sb, successStyle.Render(fmt.Sprintf("- Success Count:\t%d files", m.successCount))+"\n")
+	fmt.Fprint(sb, errorStyle.Render(fmt.Sprintf("- Failed Count:\t%d files", m.failedCount))+"\n")
+	fmt.Fprintf(sb, "Saved to: %s\n", m.outputPath)
+	if m.failedCount > 0 {
+		fmt.Fprintf(sb, "List of failed files saved to: %s\n", filepath.Join(m.outputPath, "errors.txt"))
+	}
 }
 
 func (m Model) viewError(sb *strings.Builder) {

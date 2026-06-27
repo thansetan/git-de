@@ -488,6 +488,122 @@ func TestView_Confirm(t *testing.T) {
 	}
 }
 
+func TestUpdate_Done_AnyKeyTransitionsToFinalSummary(t *testing.T) {
+	m, err := NewModel(&gitClientMock{}, "abc", "def", version)
+	if err != nil {
+		t.Fatalf("Expected error to be nil, got %s", err)
+	}
+	m.state = stateDone
+	m.totalFiles = 20
+	m.successCount = 15
+	m.failedCount = 5
+	m.outputPath = "./export"
+
+	keys := []tea.KeyMsg{
+		{Type: tea.KeyRunes, Runes: []rune{'x'}},
+		{Type: tea.KeyEnter},
+		{Type: tea.KeySpace},
+	}
+
+	for _, key := range keys {
+		updated, cmd := m.Update(key)
+		model := updated.(Model)
+
+		if model.state != stateFinalSummary {
+			t.Errorf("Expected state stateFinalSummary for key %v, got %d", key, model.state)
+		}
+		if cmd == nil {
+			t.Errorf("Expected cmd to be non-nil for key %v", key)
+		}
+	}
+}
+
+func TestUpdate_Done_Windows_E_TransitionsToFinalSummary(t *testing.T) {
+	if runtime.GOOS != "windows" {
+		t.Skip("Windows-only test")
+	}
+	m, err := NewModel(&gitClientMock{}, "abc", "def", version)
+	if err != nil {
+		t.Fatalf("Expected error to be nil, got %s", err)
+	}
+	m.state = stateDone
+	m.totalFiles = 20
+	m.successCount = 15
+	m.failedCount = 5
+	m.outputPath = "./export"
+
+	keys := []tea.KeyMsg{
+		{Type: tea.KeyRunes, Runes: []rune{'e'}},
+		{Type: tea.KeyRunes, Runes: []rune{'E'}},
+	}
+
+	for _, key := range keys {
+		updated, cmd := m.Update(key)
+		model := updated.(Model)
+
+		if model.state != stateFinalSummary {
+			t.Errorf("Expected state stateFinalSummary for key %v, got %d", key, model.state)
+		}
+		if cmd == nil {
+			t.Errorf("Expected cmd to be non-nil for key %v", key)
+		}
+	}
+}
+
+func TestView_FinalSummary(t *testing.T) {
+	m, err := NewModel(&gitClientMock{}, "abc", "def", version)
+	if err != nil {
+		t.Fatalf("Expected error to be nil, got %s", err)
+	}
+	m.state = stateFinalSummary
+	m.totalFiles = 20
+	m.successCount = 15
+	m.failedCount = 5
+	m.outputPath = "./export"
+
+	view := m.View()
+
+	if !strings.Contains(view, "Summary") {
+		t.Error("Expected 'Summary' in view")
+	}
+	if !strings.Contains(view, "./export") {
+		t.Error("Expected output path in view")
+	}
+	if !strings.Contains(view, totalStyle.Render("Total Files:\t20 files")) {
+		t.Error("Expected number of total files in view to be 20")
+	}
+	if !strings.Contains(view, successStyle.Render("Success Count:\t15 files")) {
+		t.Error("Expected number of success count in view to be 15")
+	}
+	if !strings.Contains(view, errorStyle.Render("Failed Count:\t5 files")) {
+		t.Error("Expected number of failed count in view to be 5")
+	}
+	if strings.Contains(view, "Press any key to exit") {
+		t.Error("Expected no 'Press any key to exit' in final summary view")
+	}
+	if strings.Contains(view, "to open the output directory") {
+		t.Error("Expected no directory-open prompt in final summary view")
+	}
+}
+
+func TestView_FinalSummary_HasTitle(t *testing.T) {
+	m, err := NewModel(&gitClientMock{}, "abc", "def", version)
+	if err != nil {
+		t.Fatalf("Expected error to be nil, got %s", err)
+	}
+	m.state = stateFinalSummary
+	m.totalFiles = 1
+	m.successCount = 1
+	m.failedCount = 0
+	m.outputPath = "./export"
+
+	view := m.View()
+
+	if !strings.Contains(view, m.titleText) {
+		t.Error("Expected title bar in final summary view")
+	}
+}
+
 func TestView_Done(t *testing.T) {
 	m, err := NewModel(&gitClientMock{}, "abc", "def", version)
 	if err != nil {

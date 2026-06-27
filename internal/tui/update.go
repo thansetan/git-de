@@ -193,6 +193,8 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m.handleKeyConfirm(msg)
 	case stateDone:
 		return m.handleKeyDone(msg)
+	case stateFinalSummary:
+		return m, tea.Quit
 	case stateError:
 		return m, tea.Quit
 	}
@@ -201,10 +203,11 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) handleKeyDone(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
-	if runtime.GOOS == "windows" && msg.String() == "e" || msg.String() == "E" {
-		return m, m.openExportDirectory()
+	m.state = stateFinalSummary
+	if runtime.GOOS == "windows" && (msg.String() == "e" || msg.String() == "E") {
+		return m, tea.Sequence(m.openExplorer(), tea.ClearScreen, tea.Quit)
 	}
-	return m, tea.Quit
+	return m, tea.Sequence(tea.ClearScreen, tea.Quit)
 }
 
 func (m Model) handleKeyBranchSelection(msg tea.KeyMsg) (tea.Model, tea.Cmd) {

@@ -258,6 +258,19 @@ func (m Model) exportConcurrent(exp *exporter.Exporter, files []git.FileChange, 
 	}()
 }
 
+func (m Model) openExplorer() tea.Cmd {
+	return func() tea.Msg {
+		wd, err := os.Getwd()
+		if err != nil {
+			return nil
+		}
+		absolutePath := filepath.Join(wd, m.outputPath)
+		cmd := exec.Command("explorer", absolutePath)
+		_ = cmd.Run()
+		return nil
+	}
+}
+
 func (m Model) openExportDirectory() tea.Cmd {
 	wd, err := os.Getwd()
 	if err != nil {
