@@ -48,6 +48,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case error:
 		m.err = msg
+		m.state = stateError
 		return m, nil
 
 	case tea.WindowSizeMsg:
@@ -192,6 +193,8 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m.handleKeyConfirm(msg)
 	case stateDone:
 		return m.handleKeyDone(msg)
+	case stateError:
+		return m, tea.Quit
 	}
 
 	return m, nil

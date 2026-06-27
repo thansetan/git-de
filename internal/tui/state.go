@@ -20,6 +20,7 @@ const (
 	stateConfirm
 	stateProgress
 	stateDone
+	stateError
 )
 
 const (

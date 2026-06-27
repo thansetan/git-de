@@ -50,9 +50,12 @@ func (m Model) View() string {
 
 	case stateDone:
 		m.viewDone(&sb)
+
+	case stateError:
+		m.viewError(&sb)
 	}
 
-	if m.err != nil {
+	if m.err != nil && m.state != stateError {
 		sb.WriteString("\n" + errorStyle.Render(m.err.Error()) + "\n")
 	}
 
@@ -231,5 +234,10 @@ func (m Model) viewDone(sb *strings.Builder) {
 		fmt.Fprintf(sb, "\nPress %s to open the output directory, other keys to exit\n", successStyle.Render("e"))
 		return
 	}
+	fmt.Fprintln(sb, "\nPress any key to exit")
+}
+
+func (m Model) viewError(sb *strings.Builder) {
+	sb.WriteString("\n" + errorStyle.Render(m.err.Error()) + "\n")
 	fmt.Fprintln(sb, "\nPress any key to exit")
 }

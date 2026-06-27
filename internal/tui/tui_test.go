@@ -398,6 +398,9 @@ func TestUpdate_ErrorHandling(t *testing.T) {
 	if model.err.Error() != "something went wrong" {
 		t.Errorf("Expected 'something went wrong', got %s", model.err.Error())
 	}
+	if model.state != stateError {
+		t.Errorf("Expected state stateError, got %d", model.state)
+	}
 }
 
 func TestUpdate_ProgressComplete(t *testing.T) {
@@ -1240,5 +1243,71 @@ func TestUpdate_FromCommit_InclusiveModeDoesNotAffectOtherKeys(t *testing.T) {
 
 	if model.state != stateCommitLimitSelection {
 		t.Errorf("Expected state stateCommitLimitSelection, got %d", model.state)
+	}
+}
+
+// --- Error State Tests ---
+
+func TestUpdate_ErrorState_AnyKeyQuits(t *testing.T) {
+	m, err := NewModel(&gitClientMock{}, "abc", "def", version)
+	if err != nil {
+		t.Fatalf("Expected error to be nil, got %s", err)
+	}
+	m.state = stateError
+	m.err = fmt.Errorf("fatal error")
+
+	keys := []tea.KeyMsg{
+		{Type: tea.KeyRunes, Runes: []rune{'x'}},
+		{Type: tea.KeyEnter},
+		{Type: tea.KeyEsc},
+		{Type: tea.KeySpace},
+	}
+
+	for _, key := range keys {
+		_, cmd := m.Update(key)
+		if cmd == nil {
+			t.Errorf("Expected tea.Quit for key %v, got nil", key)
+			continue
+		}
+		// tea.Quit is a function; call it to verify it returns tea.Quit()
+		if quitMsg := cmd(); quitMsg != tea.Quit() {
+			t.Errorf("Expected tea.Quit for key %v", key)
+		}
+	}
+}
+
+func TestView_ErrorState(t *testing.T) {
+	m, err := NewModel(&gitClientMock{}, "", "", version)
+	if err != nil {
+		t.Fatalf("Expected error to be nil, got %s", err)
+	}
+	m.state = stateError
+	m.err = fmt.Errorf("something went wrong")
+
+	view := m.View()
+
+	if !strings.Contains(view, "something went wrong") {
+		t.Error("Expected error message in view")
+	}
+	if !strings.Contains(view, "Press any key to exit") {
+		t.Error("Expected 'Press any key to exit' in view")
+	}
+}
+
+func TestView_ErrorState_NoDuplicateError(t *testing.T) {
+	m, err := NewModel(&gitClientMock{}, "", "", version)
+	if err != nil {
+		t.Fatalf("Expected error to be nil, got %s", err)
+	}
+	m.state = stateError
+	m.err = fmt.Errorf("fatal error")
+
+	view := m.View()
+
+	// The error message should appear exactly once (not from both the
+	// stateError case and the general m.err != nil block)
+	count := strings.Count(view, "fatal error")
+	if count != 1 {
+		t.Errorf("Expected error message to appear once, got %d occurrences", count)
 	}
 }
