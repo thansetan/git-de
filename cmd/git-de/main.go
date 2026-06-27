@@ -1,8 +1,10 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
+	"os/exec"
 	"runtime/debug"
 	"strings"
 
@@ -16,6 +18,15 @@ import (
 var version string
 
 func init() {
+	_, err := exec.LookPath("git")
+	if err != nil {
+		if errors.Is(err, exec.ErrNotFound) {
+			fmt.Fprintln(os.Stderr, "Error: git command not found")
+			os.Exit(1)
+		}
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
+		os.Exit(1)
+	}
 	if version == "" {
 		version = "dev"
 		if bi, ok := debug.ReadBuildInfo(); ok && bi.Main.Version != "" && bi.Main.Version != "(devel)" {
