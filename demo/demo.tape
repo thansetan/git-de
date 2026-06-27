@@ -47,11 +47,12 @@ Enter
 Sleep 0.5
 Type Y
 Wait+Screen /Summary/
-Sleep 1
+Sleep 0.5
 Enter
+Sleep 1
 Type "clear"
 Enter
-Type "ls output"
+Type "la output"
 Sleep 0.5
 Enter
 Sleep 1
