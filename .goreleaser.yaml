@@ -41,6 +41,9 @@ changelog:
       - "^test:"
       - "^chore:"
   groups:
+    - title: "Breaking Changes"
+      regexp: "^(chore|feat|fix|refactor).*!:"
+      order: -1
     - title: "Features"
       regexp: "^feat[(:]"
       order: 0

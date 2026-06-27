@@ -1,6 +1,6 @@
 # Git D(iff) E(xport)
 <p align="center">
-  <img src="https://github.com/thansetan/git-de/blob/main/media/demo.gif?raw=true" alt="git-de demo"/>
+  <img src="https://github.com/thansetan/git-de/blob/main/demo/demo.gif?raw=true" alt="git-de demo"/>
 </p>
 
 A **CLI** tool to export files changed between Git commits while preserving directory structure.
