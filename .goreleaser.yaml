@@ -36,10 +36,7 @@ changelog:
   use: github
   filters:
     exclude:
-      - "^ci:"
-      - "^docs:"
-      - "^test:"
-      - "^chore:"
+      - "^(docs|chore|test|ci)(?:\([^)]*\))?:"
   groups:
     - title: "Breaking Changes"
       regexp: "^(chore|feat|fix|refactor).*!:"
