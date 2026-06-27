@@ -52,7 +52,7 @@ Enter
 Sleep 1
 Type "clear"
 Enter
-Type "la output"
+Type "ls -A output"
 Sleep 0.5
 Enter
 Sleep 1
