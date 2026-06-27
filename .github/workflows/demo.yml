@@ -1,0 +1,33 @@
+name: Update Demo File
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Install git-de from release
+        run: |
+          gh release download ${{ github.ref_name }} \
+            -p 'git-de_*_linux_x86_64.tar.gz' \
+            -R ${{ github.repository }}
+          tar xzf git-de_*_linux_x86_64.tar.gz
+          sudo mv git-de /usr/local/bin/git-de
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: charmbracelet/vhs-action@v2
+        with:
+          path: "demo/demo.tape"
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs(demo): update demo GIF for ${{ github.ref_name }}"
+          branch: main
+          file_pattern: "demo/demo.gif"
