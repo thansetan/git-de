@@ -166,6 +166,10 @@ func (m Model) viewFileSelection(sb *strings.Builder) {
 	// Keyboard hints
 	if m.inputMode {
 		sb.WriteString("\n[enter:apply] [esc:cancel]\n")
+	} else if m.filterInput.Value() != "" {
+		// Filter active: lowercase a/n act on the visible set,
+		// uppercase A/N act on the whole list.
+		sb.WriteString("\n[/:filter] [space:toggle] [a:visible] [n:visible] [A:all] [N:none] [c:clear filter] [backspace:back] [enter:continue] [esc:exit]\n")
 	} else {
 		sb.WriteString("\n[/:filter] [space:toggle] [a:all] [n:none] [c:clear filter] [backspace:back] [enter:continue] [esc:exit]\n")
 	}

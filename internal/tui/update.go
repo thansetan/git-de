@@ -388,15 +388,25 @@ func (m Model) handleKeyFileSelection(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 				m.files[idx].selected = !m.files[idx].selected
 			}
 		}
-	case "a", "A":
+	case "a":
 		for _, idx := range m.filteredIdx {
 			if !m.files[idx].disabled {
 				m.files[idx].selected = true
 			}
 		}
-	case "n", "N":
+	case "A":
+		for i := range m.files {
+			if !m.files[i].disabled {
+				m.files[i].selected = true
+			}
+		}
+	case "n":
 		for _, idx := range m.filteredIdx {
 			m.files[idx].selected = false
+		}
+	case "N":
+		for i := range m.files {
+			m.files[i].selected = false
 		}
 	case "backspace":
 		m.clearFilter()
