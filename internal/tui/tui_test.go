@@ -223,6 +223,114 @@ func TestUpdate_FileSelection_SelectNone(t *testing.T) {
 	}
 }
 
+func TestUpdate_FileSelection_SelectAllVisible_WithFilter(t *testing.T) {
+	m, err := NewModel(&gitClientMock{}, "abc", "def", version)
+	if err != nil {
+		t.Errorf("Expected error to be nil, got %s", err)
+	}
+	m.state = stateFileSelection
+	m.files = []fileItem{
+		{path: "main.go", status: git.StatusAdded, selected: false, disabled: false},
+		{path: "utils.go", status: git.StatusModified, selected: false, disabled: false},
+	}
+	// Filter active: only main.go matches.
+	m.filterInput.SetValue("main")
+	m.filteredIdx = []int{0}
+	m.cursor = 0
+
+	updated, _ := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'a'}})
+	model := updated.(Model)
+
+	if model.files[0].selected != true {
+		t.Error("Expected main.go (visible) to be selected")
+	}
+	if model.files[1].selected != false {
+		t.Error("Expected utils.go (filtered out) to stay unselected with lowercase 'a'")
+	}
+}
+
+func TestUpdate_FileSelection_SelectAllGlobal_WithFilter(t *testing.T) {
+	m, err := NewModel(&gitClientMock{}, "abc", "def", version)
+	if err != nil {
+		t.Errorf("Expected error to be nil, got %s", err)
+	}
+	m.state = stateFileSelection
+	m.files = []fileItem{
+		{path: "main.go", status: git.StatusAdded, selected: false, disabled: false},
+		{path: "utils.go", status: git.StatusModified, selected: false, disabled: false},
+		{path: "old.go", status: git.StatusDeleted, selected: false, disabled: true},
+	}
+	// Filter active: only main.go matches.
+	m.filterInput.SetValue("main")
+	m.filteredIdx = []int{0}
+	m.cursor = 0
+
+	updated, _ := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'A'}})
+	model := updated.(Model)
+
+	if model.files[0].selected != true {
+		t.Error("Expected main.go to be selected")
+	}
+	if model.files[1].selected != true {
+		t.Error("Expected utils.go (filtered out) to be selected by global 'A'")
+	}
+	if model.files[2].selected != false {
+		t.Error("Expected disabled file to remain unselected")
+	}
+}
+
+func TestUpdate_FileSelection_SelectNoneVisible_WithFilter(t *testing.T) {
+	m, err := NewModel(&gitClientMock{}, "abc", "def", version)
+	if err != nil {
+		t.Errorf("Expected error to be nil, got %s", err)
+	}
+	m.state = stateFileSelection
+	m.files = []fileItem{
+		{path: "main.go", status: git.StatusAdded, selected: true, disabled: false},
+		{path: "utils.go", status: git.StatusModified, selected: true, disabled: false},
+	}
+	// Filter active: only main.go matches.
+	m.filterInput.SetValue("main")
+	m.filteredIdx = []int{0}
+	m.cursor = 0
+
+	updated, _ := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'n'}})
+	model := updated.(Model)
+
+	if model.files[0].selected != false {
+		t.Error("Expected main.go (visible) to be deselected")
+	}
+	if model.files[1].selected != true {
+		t.Error("Expected utils.go (filtered out) to stay selected with lowercase 'n'")
+	}
+}
+
+func TestUpdate_FileSelection_SelectNoneGlobal_WithFilter(t *testing.T) {
+	m, err := NewModel(&gitClientMock{}, "abc", "def", version)
+	if err != nil {
+		t.Errorf("Expected error to be nil, got %s", err)
+	}
+	m.state = stateFileSelection
+	m.files = []fileItem{
+		{path: "main.go", status: git.StatusAdded, selected: true, disabled: false},
+		{path: "utils.go", status: git.StatusModified, selected: true, disabled: false},
+	}
+	// Filter active: only main.go matches.
+	m.filterInput.SetValue("main")
+	m.filteredIdx = []int{0}
+	m.cursor = 0
+
+	updated, _ := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'N'}})
+	model := updated.(Model)
+
+	if model.files[0].selected != false {
+		t.Error("Expected main.go to be deselected")
+	}
+	if model.files[1].selected != false {
+		t.Error("Expected utils.go (filtered out) to be deselected by global 'N'")
+	}
+}
+
 func TestUpdate_FileSelection_Navigation(t *testing.T) {
 	m, err := NewModel(&gitClientMock{}, "abc", "def", version)
 	if err != nil {
@@ -462,6 +570,36 @@ func TestView_FileSelection(t *testing.T) {
 	}
 	if !strings.Contains(view, "[space:toggle]") {
 		t.Error("Expected keyboard shortcuts in view")
+	}
+}
+
+func TestView_FileSelection_HintsAdaptToFilter(t *testing.T) {
+	m, err := NewModel(&gitClientMock{}, "abc", "def", version)
+	if err != nil {
+		t.Errorf("Expected error to be nil, got %s", err)
+	}
+	m.state = stateFileSelection
+	m.files = []fileItem{
+		{path: "main.go", status: git.StatusAdded, selected: true},
+		{path: "old.go", status: git.StatusDeleted, selected: false, disabled: true},
+	}
+	m.cursor = 0
+
+	// Without a filter: a/n operate on everything, so plain labels.
+	view := m.View()
+	if !strings.Contains(view, "[a:all]") || !strings.Contains(view, "[n:none]") {
+		t.Error("Expected [a:all] [n:none] hints when no filter is active")
+	}
+
+	// With a filter: lowercase a/n are scoped to the visible set;
+	// uppercase A/N cover the whole list.
+	m.filterInput.SetValue("main")
+	view = m.View()
+	if !strings.Contains(view, "[a:visible]") || !strings.Contains(view, "[n:visible]") {
+		t.Error("Expected [a:visible] [n:visible] hints when a filter is active")
+	}
+	if !strings.Contains(view, "[A:all]") || !strings.Contains(view, "[N:none]") {
+		t.Error("Expected [A:all] [N:none] hints when a filter is active")
 	}
 }
 
