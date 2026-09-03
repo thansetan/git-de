@@ -2,6 +2,7 @@ package tui
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 
@@ -20,6 +21,8 @@ type Model struct {
 	gitClient gitClient
 	err       error
 	titleText string
+
+	currentDirectory string
 
 	// Branch selection
 	selectedBranch string
@@ -110,6 +113,12 @@ func NewModel(client gitClient, from, to, version string) (Model, error) {
 		toCommit:    to,
 		commitLimit: defaultCommitLimit,
 	}
+	wd, err := os.Getwd()
+	if err != nil {
+		return Model{}, err
+	}
+	m.currentDirectory = wd
+
 	branch, err := client.GetCurrentBranch()
 	if err != nil {
 		return Model{}, err
@@ -133,7 +142,7 @@ func Run(client *git.Client, from, to, version string) error {
 	if err != nil {
 		return err
 	}
-	p := tea.NewProgram(m)
+	p := tea.NewProgram(m, tea.WithAltScreen())
 	_, err = p.Run()
 	return err
 }

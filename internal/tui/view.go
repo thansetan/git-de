@@ -67,11 +67,11 @@ func (m Model) View() string {
 
 func (m Model) viewTopBar(sb *strings.Builder) {
 	if m.state < stateFromCommit || m.state > stateFileSelection {
-		fmt.Fprintf(sb, "%s\n\n", topBarBlockStyle.Render(topBarItemStyle.Render(m.titleText)))
+		fmt.Fprintf(sb, "%s\n\n", topBarBlockStyle.Render(topBarItemStyle.Render(fmt.Sprintf("%s (in %s)", m.titleText, m.currentDirectory))))
 		return
 	}
 
-	titleText := topBarItemStyle.Render(m.titleText)
+	titleText := topBarItemStyle.Render(fmt.Sprintf("%s (in %s)", m.titleText, m.currentDirectory))
 
 	inclusiveModeText := topBarItemStyle.Render("INCLUSIVE MODE [")
 	if m.inclusiveMode {
@@ -81,7 +81,7 @@ func (m Model) viewTopBar(sb *strings.Builder) {
 	}
 	inclusiveModeText += topBarItemStyle.Render("]")
 
-	fmt.Fprint(sb, topBarBlockStyle.Width(max(lipgloss.Width(inclusiveModeText), lipgloss.Width(titleText))+2).Render(titleText+"\n"+inclusiveModeText)+"\n")
+	fmt.Fprint(sb, topBarBlockStyle.Width(max(lipgloss.Width(inclusiveModeText), lipgloss.Width(titleText))+2).Render(titleText, inclusiveModeText)+"\n")
 }
 
 func (m Model) viewLimitCustom(sb *strings.Builder) {
