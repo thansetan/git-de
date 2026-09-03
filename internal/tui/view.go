@@ -66,12 +66,13 @@ func (m Model) View() string {
 }
 
 func (m Model) viewTopBar(sb *strings.Builder) {
+	titleText := topBarItemStyle.Render(fmt.Sprintf("%s (on ", m.titleText))
+	titleText += topBarCurrentDirectoryStyle.Render(m.currentDirectory)
+	titleText += topBarItemStyle.Render(")")
 	if m.state < stateFromCommit || m.state > stateFileSelection {
-		fmt.Fprintf(sb, "%s\n\n", topBarBlockStyle.Render(topBarItemStyle.Render(fmt.Sprintf("%s (in %s)", m.titleText, m.currentDirectory))))
+		fmt.Fprintf(sb, "%s\n\n", topBarBlockStyle.Render(titleText))
 		return
 	}
-
-	titleText := topBarItemStyle.Render(fmt.Sprintf("%s (in %s)", m.titleText, m.currentDirectory))
 
 	inclusiveModeText := topBarItemStyle.Render("INCLUSIVE MODE [")
 	if m.inclusiveMode {
