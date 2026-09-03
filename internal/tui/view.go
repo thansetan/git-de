@@ -66,7 +66,7 @@ func (m Model) View() string {
 }
 
 func (m Model) viewTopBar(sb *strings.Builder) {
-	titleText := topBarItemStyle.Render(fmt.Sprintf("%s (on ", m.titleText))
+	titleText := topBarItemStyle.Render(fmt.Sprintf("%s (in ", m.titleText))
 	titleText += topBarCurrentDirectoryStyle.Render(m.currentDirectory)
 	titleText += topBarItemStyle.Render(")")
 	if m.state < stateFromCommit || m.state > stateFileSelection {
