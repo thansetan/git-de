@@ -27,7 +27,8 @@ const (
 const (
 	defaultOutputPath   = "./export"
 	defaultCommitLimit  = 50
-	commitLimitAll      = 999999
+	minCustomCommit     = 1
+	maxCustomCommit     = 999999
 	numWorkers          = 5
 	bufferSize          = 20
 	concurrentThreshold = 100

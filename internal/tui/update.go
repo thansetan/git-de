@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"errors"
 	"runtime"
 	"strings"
 
@@ -270,28 +271,33 @@ func (m Model) handleKeyLimitSelection(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 func (m Model) handleKeyLimitCustom(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	switch msg.String() {
 	case "enter":
-		if m.limitInput.Value() != "" {
-			limit, err := validateCommitLimit(m.limitInput.Value())
-			if err != nil {
-				m.err = err
-				return m, nil
-			}
-			m.commitLimit = limit
-			m.err = nil
-			m.state = stateFromCommit
-			if m.selectedBranch != "" {
-				return m, m.loadCommitsOnBranchCmd
-			}
-			return m, m.loadCommitsCmd
+		if len(strings.TrimSpace(m.limitInput.Value())) == 0 {
+			m.err = errors.New("commit limit is required!")
+			return m, nil
 		}
+		limit, err := validateCommitLimit(m.limitInput.Value())
+		if err != nil {
+			m.err = err
+			return m, nil
+		}
+		m.commitLimit = limit
+		m.err = nil
+		m.state = stateFromCommit
+		if m.selectedBranch != "" {
+			return m, m.loadCommitsOnBranchCmd
+		}
+		return m, m.loadCommitsCmd
 	case "esc":
 		m.state = stateCommitLimitSelection
 		m.err = nil
 		return m, nil
-	default:
+	case "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", tea.KeyBackspace.String(), tea.KeyDelete.String(), tea.KeyLeft.String(), tea.KeyRight.String():
 		var cmd tea.Cmd
 		m.limitInput, cmd = m.limitInput.Update(msg)
+		m.err = nil
 		return m, cmd
+	default:
+		return m, nil
 	}
 	return m, nil
 }

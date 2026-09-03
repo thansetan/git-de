@@ -88,7 +88,7 @@ func (m Model) viewLimitCustom(sb *strings.Builder) {
 	sb.WriteString("Enter Custom Commit Limit:\n\n")
 	sb.WriteString(m.limitInput.View())
 	sb.WriteString("\n\n")
-	sb.WriteString(statusStyle.Render("Enter a number between 1 and 999999"))
+	sb.WriteString(statusStyle.Render(fmt.Sprintf("Enter a number between %d and %d", minCustomCommit, maxCustomCommit)))
 	sb.WriteString("\n[Enter:confirm] [esc:back]\n")
 }
 

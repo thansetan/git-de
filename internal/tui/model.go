@@ -96,8 +96,8 @@ func NewModel(client gitClient, from, to, version string) (Model, error) {
 	fi.Prompt = "/ "
 
 	li := textinput.New()
-	li.Placeholder = "Enter number of commits (1-999999)"
-	li.CharLimit = 6
+	li.Placeholder = fmt.Sprintf("Enter number of commits (%d-%d)", minCustomCommit, maxCustomCommit)
+	li.CharLimit = len(strconv.Itoa(maxCustomCommit))
 
 	prog := progress.New(progress.WithDefaultGradient())
 
@@ -170,11 +170,11 @@ func validateCommitLimit(input string) (int, error) {
 	if err != nil {
 		return 0, fmt.Errorf("invalid number")
 	}
-	if n < 1 {
-		return 0, fmt.Errorf("must be at least 1")
+	if n < minCustomCommit {
+		return 0, fmt.Errorf("must be at least %d", minCustomCommit)
 	}
-	if n > commitLimitAll {
-		return 0, fmt.Errorf("maximum is %d", commitLimitAll)
+	if n > maxCustomCommit {
+		return 0, fmt.Errorf("maximum is %d", maxCustomCommit)
 	}
 	return n, nil
 }
