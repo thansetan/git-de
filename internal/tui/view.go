@@ -105,7 +105,7 @@ func (m Model) viewCommitRangeSummary(sb *strings.Builder) {
 	fmt.Fprintf(sb, "Files changed:  %s\n", totalStyle.Render(strconv.Itoa(m.rangeStats.FilesChanged)))
 	fmt.Fprintf(sb, "Additions:      %s\n", successStyle.Render(fmt.Sprintf("+%d", m.rangeStats.Additions)))
 	fmt.Fprintf(sb, "Deletions:      %s\n", errorStyle.Render(fmt.Sprintf("-%d", m.rangeStats.Deletions)))
-	sb.WriteString("\n[enter:proceed] [i/I:toggle inclusive mode] [backspace:change range] [esc:quit]\n")
+	sb.WriteString("\n[enter:proceed] [i/I:toggle inclusive mode] [backspace:change range] [esc/q:quit]\n")
 }
 
 func (m Model) viewFileSelection(sb *strings.Builder) {
@@ -169,9 +169,9 @@ func (m Model) viewFileSelection(sb *strings.Builder) {
 	} else if m.filterInput.Value() != "" {
 		// Filter active: lowercase a/n act on the visible set,
 		// uppercase A/N act on the whole list.
-		sb.WriteString("\n[/:filter] [space:toggle] [a:visible] [n:visible] [A:all] [N:none] [c:clear filter] [backspace:back] [enter:continue] [esc:exit]\n")
+		sb.WriteString("\n[/:filter] [space:toggle] [a:visible] [n:visible] [A:all] [N:none] [c:clear filter] [backspace:back] [enter:continue] [esc/q:quit]\n")
 	} else {
-		sb.WriteString("\n[/:filter] [space:toggle] [a:all] [n:none] [c:clear filter] [backspace:back] [enter:continue] [esc:exit]\n")
+		sb.WriteString("\n[/:filter] [space:toggle] [a:all] [n:none] [c:clear filter] [backspace:back] [enter:continue] [esc/q:quit]\n")
 	}
 }
 
@@ -208,7 +208,7 @@ func (m Model) viewOutputPath(sb *strings.Builder) {
 	if m.outputInputFocused {
 		sb.WriteString("\n\n[enter:confirm] [esc:blur]\n")
 	} else {
-		sb.WriteString("\n\n[any key:focus] [backspace:back] [esc:quit]\n")
+		sb.WriteString("\n\n[any key:focus] [backspace:back] [esc/q:quit]\n")
 	}
 }
 
@@ -219,7 +219,7 @@ func (m Model) viewConfirm(sb *strings.Builder) {
 		sb.WriteString(warningStyle.Render("⚠ Warning: Directory exists and will be overwritten!") + "\n\n")
 	}
 
-	sb.WriteString("[Y:confirm] [N/backspace:back] [esc:quit]\n")
+	sb.WriteString("[Y:confirm] [N/backspace:back] [esc/q:quit]\n")
 }
 
 func (m Model) viewProgress(sb *strings.Builder) {

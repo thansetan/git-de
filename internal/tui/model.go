@@ -86,7 +86,7 @@ func NewModel(client gitClient, from, to, version string) (Model, error) {
 	ti.Focus()
 
 	commitList := list.New([]list.Item{}, list.NewDefaultDelegate(), 60, 20)
-	commitList.KeyMap.Quit = key.NewBinding(key.WithKeys("esc"), key.WithHelp("esc", "quit"))
+	commitList.KeyMap.Quit = key.NewBinding(key.WithKeys("esc", "q"), key.WithHelp("esc/q", "quit"))
 
 	fi := textinput.New()
 	fi.Placeholder = "type to filter..."

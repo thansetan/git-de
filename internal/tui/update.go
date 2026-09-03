@@ -84,7 +84,7 @@ func (m Model) handleListItems(items []list.Item) (tea.Model, tea.Cmd) {
 		h = m.height - 5
 	}
 	m.list = list.New(items, list.NewDefaultDelegate(), w, h)
-	m.list.KeyMap.Quit = key.NewBinding(key.WithKeys("esc"), key.WithHelp("esc", "quit"))
+	m.list.KeyMap.Quit = key.NewBinding(key.WithKeys("esc", "q"), key.WithHelp("esc/q", "quit"))
 
 	switch m.state {
 	case stateFromCommit, stateToCommit:
@@ -359,7 +359,7 @@ func (m Model) handleKeyCommitRangeSummary(msg tea.KeyMsg) (tea.Model, tea.Cmd) 
 			return m, m.loadToCommitsOnBranchCmd
 		}
 		return m, m.loadToCommitsCmd
-	case "esc":
+	case "esc", "q":
 		return m, tea.Quit
 	}
 	return m, nil
@@ -420,7 +420,7 @@ func (m Model) handleKeyFileSelection(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.input.Focus()
 		m.state = stateOutputPath
 		return m, nil
-	case "esc":
+	case "esc", "q":
 		return m, tea.Quit
 	}
 
@@ -497,7 +497,7 @@ func (m Model) handleKeyOutputPath(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 	// Input is blurred - navigation mode
 	switch msg.String() {
-	case "esc":
+	case "esc", "q":
 		return m, tea.Quit
 	case "backspace":
 		// Go back to file selection
@@ -533,7 +533,7 @@ func (m Model) handleKeyConfirm(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.input.Focus()
 		return m, nil
 	}
-	if msg.String() == "esc" {
+	if msg.String() == "esc" || msg.String() == "q" {
 		return m, tea.Quit
 	}
 	return m, nil
