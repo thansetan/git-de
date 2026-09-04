@@ -3,6 +3,7 @@ package tui
 import (
 	"errors"
 	"runtime"
+	"strconv"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/key"
@@ -293,12 +294,26 @@ func (m Model) handleKeyLimitCustom(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m, nil
 	case "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", tea.KeyBackspace.String(), tea.KeyDelete.String(), tea.KeyLeft.String(), tea.KeyRight.String():
 		var cmd tea.Cmd
+		currVal := m.limitInput.Value()
 		m.limitInput, cmd = m.limitInput.Update(msg)
+		if len(currVal) > 0 && len(msg.Runes) > 0 && msg.Runes[0] >= '0' && msg.Runes[0] <= '9' {
+			val, err := strconv.Atoi(currVal)
+			if err != nil {
+				m.err = err
+				return m, nil
+			}
+			nextVal := val*10 + int(msg.Runes[0]-'0')
+			if len(currVal) == m.limitInput.CharLimit {
+				m.limitInput.SetValue(strconv.Itoa(min(maxCustomCommit, max(nextVal, minCustomCommit))))
+			} else if val == 0 {
+				m.limitInput.SetValue(strconv.Itoa(nextVal))
+			}
+		}
 		m.err = nil
+
 		return m, cmd
-	default:
-		return m, nil
 	}
+
 	return m, nil
 }
 
